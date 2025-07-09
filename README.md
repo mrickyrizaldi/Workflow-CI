@@ -58,13 +58,13 @@ Script modelling.py secara otomatis menjalankan tahapan berikut:
 2. Train Model: Training Random Forest Classifier.
 3. MLflow Autologging: Logging otomatis semua parameter & metrics.
 4. Custom Metrics Logging: Logging tambahan seperti log loss & training time.
+5. Save Model: Menyimpan model ke artefak MLflow.
 
 ### Docker Image (Hasil Deployment)
 Image otomatis dibuat & dipush ke Docker Hub:
 ```
 docker pull docker.io/mrickyr/pipe-mt-model:[tag]
 ```
-Save Model: Menyimpan model ke artefak MLflow.
 
 ---
 ## Tools & Library
