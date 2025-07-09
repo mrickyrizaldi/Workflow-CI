@@ -1,0 +1,15 @@
+artifact_uri: file:///home/runner/work/Workflow-CI/Workflow-CI/mlruns/0/99d55a9ee1a04bad8066d7d9cf3a6986/artifacts
+end_time: 1752101937048
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 99d55a9ee1a04bad8066d7d9cf3a6986
+run_name: learned-bird-934
+run_uuid: 99d55a9ee1a04bad8066d7d9cf3a6986
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1752101887945
+status: 3
+tags: []
+user_id: runner
