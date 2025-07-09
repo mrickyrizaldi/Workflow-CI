@@ -63,7 +63,7 @@ Script modelling.py secara otomatis menjalankan tahapan berikut:
 ### Docker Image (Hasil Deployment)
 Image otomatis dibuat & dipush ke Docker Hub:
 ```
-docker pull docker.io/mrickyr/pipe-mt-model:[tag]
+docker pull mrickyr/pipe-condition-model
 ```
 
 ---
