@@ -1,0 +1,19 @@
+name: CI_Modelling
+
+conda_env: conda.yaml
+
+entry_points:
+  main:
+    parameters:
+      n_estimators: {type: int, default: 120}
+      max_depth: {type: int, default: 7}
+      min_samples_split: {type: int, default: 2}
+      min_samples_leaf: {type: int, default: 9}
+      dataset_dir: {type: str, default: "MLProject/preprocessed_data_auto_20250701_145341"}
+    command: >
+      python modelling.py
+      {n_estimators}
+      {max_depth}
+      {min_samples_split}
+      {min_samples_leaf}
+      {dataset_dir}
