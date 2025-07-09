@@ -1,0 +1,37 @@
+artifact_path: model
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.12.7
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.7.0
+mlflow_version: 2.19.0
+model_size_bytes: 391887
+model_uuid: 9c7c4202f6694abfbc4c6644d94a68a7
+run_id: 9c5056e29a8d4df9b3b9f4994a125e9d
+signature:
+  inputs: '[{"type": "double", "name": "Thickness_mm", "required": true}, {"type":
+    "double", "name": "Material_Loss_Percent", "required": true}, {"type": "double",
+    "name": "Max_Pressure_psi", "required": true}, {"type": "double", "name": "Temperature_C",
+    "required": true}, {"type": "double", "name": "Corrosion_Impact_Percent", "required":
+    true}, {"type": "double", "name": "Thickness_Loss_mm", "required": true}, {"type":
+    "double", "name": "Time_Years", "required": true}, {"type": "double", "name":
+    "Material_Carbon Steel", "required": true}, {"type": "double", "name": "Material_Fiberglass",
+    "required": true}, {"type": "double", "name": "Material_HDPE", "required": true},
+    {"type": "double", "name": "Material_PVC", "required": true}, {"type": "double",
+    "name": "Material_Stainless Steel", "required": true}, {"type": "double", "name":
+    "Grade_API 5L X42", "required": true}, {"type": "double", "name": "Grade_API 5L
+    X52", "required": true}, {"type": "double", "name": "Grade_API 5L X65", "required":
+    true}, {"type": "double", "name": "Grade_ASTM A106 Grade B", "required": true},
+    {"type": "double", "name": "Grade_ASTM A333 Grade 6", "required": true}]'
+  outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "int64", "shape": [-1]}}]'
+  params: null
+utc_time_created: '2025-07-09 22:45:11.147121'
