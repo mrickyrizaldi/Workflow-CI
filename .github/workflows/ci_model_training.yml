@@ -1,0 +1,94 @@
+name: CI-Model-Training
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Izinkan write ke repo otomatis
+
+    steps:
+      # Checkout kode dari repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Setup Conda environment dari conda.yaml
+      - name: Set up Miniconda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          activate-environment: ci_modelling_env
+          environment-file: MLProject/conda.yaml
+          auto-activate-base: false
+
+      # Training model menggunakan MLflow Project
+      - name: Train model with MLflow Project
+        run: |
+          echo "Menjalankan training model dengan MLflow Project"
+          conda run -n ci_modelling_env mlflow run MLProject -P n_estimators=120 -P max_depth=7 -P min_samples_split=2 -P min_samples_leaf=9 -P dataset_dir=preprocessed_data_auto_20250701_145341
+          echo "Training model selesai."
+
+      # Backup artifact MLflow ke folder khusus (timestamped)
+      - name: Save MLflow artifacts to repo folder
+        run: |
+          echo "Menyimpan artifact MLflow ke folder artefak dengan timestamp"
+          TIMESTAMP=$(date +'%Y%m%d_%H%M%S')
+          DEST_FOLDER="Mlflow-Artifact/$TIMESTAMP"
+          mkdir -p "$DEST_FOLDER"
+          cp -r mlruns "$DEST_FOLDER"
+          echo "Artifact disimpan di $DEST_FOLDER"
+
+      # Commit artifact ke repository GitHub (jika ada perubahan)
+      - name: Commit & push artifacts to repo
+        run: |
+          echo "Commit dan push artifact ke GitHub repository"
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add -f Mlflow-Artifact/
+          git commit -m "Save Mlflow artifact from CI run" || echo "Nothing to commit"
+          git push origin main
+          echo "Push ke GitHub selesai."
+
+      # Upload artifact ke Google Drive
+      - name: Upload artifacts to Google Drive
+        env:
+          GDRIVE_CREDENTIALS: ${{ secrets.GDRIVE_CREDENTIALS }}
+          GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
+        run: |
+          echo "Upload artifact ke Google Drive"
+          conda run -n ci_modelling_env python MLProject/upload_to_gdrive.py
+          echo "Upload ke Google Drive selesai."
+
+      # Build Docker Image dari model MLflow
+      - name: Build Docker Image from MLflow Model
+        run: |
+          echo "Membangun Docker Image dari model MLflow"
+          MODEL_PATH=$(find mlruns/ -name MLmodel | head -n 1 | xargs dirname)
+          TAG=$(date +'%Y%m%d_%H%M%S')
+          IMAGE_NAME="${{ secrets.DOCKER_HUB_USERNAME }}/pipe-condition-model:${TAG}"
+          echo "Docker Image Tag: $IMAGE_NAME"
+          # Build Docker Image
+          conda run -n ci_modelling_env mlflow models build-docker -m "$MODEL_PATH" -n "$IMAGE_NAME"
+          
+          # Simpan nama image ke file untuk step berikutnya
+          echo "$IMAGE_NAME" > docker_image_name.txt
+          echo "Docker Image berhasil dibuat: $IMAGE_NAME"
+
+      # Push Docker Image ke Docker Hub
+      - name: Push Docker Image to Docker Hub
+        env:
+          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+        run: |
+          echo "Push Docker Image ke Docker Hub"
+          IMAGE_NAME=$(cat docker_image_name.txt)
+          echo "$DOCKER_HUB_ACCESS_TOKEN" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
+          docker push "$IMAGE_NAME"
+          echo "Push Docker Image selesai."
